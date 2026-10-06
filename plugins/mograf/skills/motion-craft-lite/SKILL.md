@@ -20,7 +20,7 @@ Register these once per composition and use them by role:
 gsap.registerPlugin(CustomEase);
 CustomEase.create("mg.enter",  ".20,.75,.34,.94"); // entrances: sharp in, clean landing
 CustomEase.create("mg.settle", ".00,.65,.51,.99"); // landings, lockups, count-ups: fast out, LONG settle
-CustomEase.create("mg.travel", "1,.49,0,.55");     // A→B travel and camera moves
+CustomEase.create("mg.travel", "1,.49,0,.55");     // long A→B travel (S-curve, steep midpoint)
 CustomEase.create("mg.depart", ".33,0,.12,1");     // camera/element leaving FROM REST
 CustomEase.create("mg.exit",   "1,.02,.54,.42");   // exits: accelerate away
 CustomEase.create("mg.cut",    ".15,.85,.95,.05"); // moves interrupted by a cut, never settle
@@ -32,7 +32,7 @@ The same curves as CSS `cubic-bezier(...)` work in CSS and WAAPI. In Remotion, u
 
 Two traps:
 - `mg.settle` starts with a vertical tangent: on a rotation or camera move that starts **from rest** (after a click, after a hold) it jolts in one frame. Use `mg.depart` there.
-- `mg.travel` is near-linear and barely moves in the first ~15 % of long (> 1.5 s) reveals. Use `mg.depart` or `mg.inout` for long reveals.
+- `mg.travel` is **S-shaped with a near-vertical midpoint tangent**, not near-linear: it barely moves at the ends and jumps in the middle (on a 0.75 s camera move, 28 % of the travel lands in one frame). Keep it for long travel (≥ ~1.2 s); for short camera moves use `mg.inout` or a baked spring, and `mg.depart` when leaving from rest.
 
 This is the whole allowed list: the `mg.*` tokens plus these built-ins (and a baked spring at damping 0.80–0.85 if you need one). Anything else (`power2.out`, `sine.*`, `power4.in`, …) is off-palette:
 
@@ -52,6 +52,7 @@ Rules:
   tl.add(lockup, T + 0.3);
   tl.fromTo(".kicker", { yPercent: 105 }, { yPercent: 0, duration: 0.5, ease: "mg.depart" }, T + 0.3); // concurrent → own ease
   ```
+- Count ease *users*, not tweens. A locked group counts once. A setter-driven proxy (one tween on a `{t}` or camera object whose setters repaint the scene) counts as one user with the ease on its tween; eases evaluated inside its paint function don't count separately, so many simultaneous contacts can run from one driver. Concurrent drivers still need different eases.
 - Swapping an ease while polishing can create a new collision. After every swap, re-check which tweens overlap in time and what they use.
 - Stagger distribution eases (`stagger: { each, ease }`) are timing offsets, not tween eases; they don't count.
 - Hero spatial moves never use linear, `power1`, CSS `ease` or `ease-in-out`.
@@ -71,7 +72,7 @@ Rules:
 | Final logo / CTA hold | ≥ 0.8 s, perfectly still, works as a thumbnail |
 
 - **Rhythm.**
-  - The slowest beat should be about 3× the fastest beat.
+  - The slowest storyboard beat is at least 3× the fastest (a beat is a storyboard row, not a sub-tween inside it).
   - Across all tweens, longest ÷ shortest should be at least 4.
   - Name the rhythm before you build, e.g. `fast-fast-SLOW-cut-hold`.
 - **Distance and mass.** Longer distance or more mass means a longer duration.
@@ -92,7 +93,7 @@ Rules:
 
 ## 4. Never do this
 
-- **The default fade-up.** `opacity 0→1, y 20–40→0, power2.out` on anything. Text uses masks, splits, depth, cuts or a light pass instead. A line-mask rise (`yPercent → 0` inside an overflow-hidden line) that also blurs on the approach starts at `yPercent ≥ 130`; at 105 the blur halo leaks into the mask before the line moves.
+- **The default fade-up.** `opacity 0→1, y 20–40→0, power2.out` on anything. Text uses masks, splits, depth, cuts or a light pass instead. A line-mask rise (`yPercent → 0` inside an overflow-hidden line) that also blurs on the approach starts at `yPercent ≥ 130`; at 105 the blur halo leaks into the mask before the line moves. Hide masked lines at build time with `gsap.set`, not a `tl.set(…, 0)` (which can fool contrast audits into sampling the unhidden line).
 - **`scale(0)` entrances.** Exceptions: dots, particles and mask circles. Otherwise start at 0.9–0.97.
 - **Uniform timing.** Identical durations, or a uniform 0.1 s stagger.
 - **Idle breathing.** Scale or opacity yoyo pulses on idle elements. Instead, use stillness, one motivated ambient background, or a camera drift that has an end pose.
@@ -114,7 +115,7 @@ Self-check before you hand it over:
 ## 5. Video basics
 
 - **Type size at 1080p.** Headlines 64–120 px (90 px or more in a feed). Body text 32 px or more.
-- **Hierarchy.** The hero fills 60–80 % of the width. Scale contrast is at least 5:1. Leave 30–50 % negative space, and anchor to a grid or the edges.
+- **Hierarchy.** The hero fills 60–80 % of the width. Scale contrast is at least 5:1. Leave 30–50 % negative space (a centred logo or end-card frame may go up to 75 %), and anchor to a grid or the edges.
 - **Safe areas.**
   - 16:9: keep text inside the 90 % title-safe area.
   - 9:16: no text in the top 14 %, bottom 20 % or right 12 %.
@@ -128,6 +129,8 @@ Self-check before you hand it over:
   - Tween transforms, opacity, filter and clip-path only. No CSS transitions.
   - No `Math.random` or `Date.now`; use a seeded PRNG.
   - Load fonts from local `@font-face` files and split text only after `document.fonts.ready`.
+  - Stacked `fromTo` tweens on the same property get `immediateRender: false` written literally in each vars object (linters look for the literal key, not a helper that adds it).
+  - Computed transforms, canvas and three.js renders come from timeline time through a setter-driven proxy, not `onUpdate` (callbacks are suppressed on seek).
 
 ---
 

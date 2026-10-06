@@ -13,12 +13,13 @@ Linters catch broken code. This skill catches **taste**. Default posture: *flag 
 - Run as a **fresh sub-agent** when you can. Give it: this file, the project folder, and the brief. Do not tell it how hard the build was.
 - The reviewer **never edits the composition**. It writes `review.md` in the project folder and returns the verdict.
 - Look at pixels, not just code. Every score must point at a timestamp, frame or selector.
+- **One reviewer per piece.** Two reviewers running at once write the same `review.md` and their verdicts conflict. Each round ends with one `verdict:` line; the caller polls `review.md` for it. Re-reviews go to the same reviewer; start a replacement only if `review.md` shows no new round after a long wait, note the cancellation in `review.md`, and have the replacement read the history first. If rounds conflict, the last write to `review.md` is authoritative.
 
 ## Procedure
 
 Run every step. Commands assume a HyperFrames project (`npx hyperframes …`); for other stacks use the equivalent (Remotion: `npx remotion still` for frames, `npx remotion render` for the strip).
 
-1. **Structure.** `npx hyperframes check .` Any error is a Block. Read the warnings too. Its contrast audit is the contrast gate.
+1. **Structure.** `npx hyperframes check .` Any error is a Block. Read the warnings too. Its contrast audit is the contrast gate. Decorative text never meant to be read (blur ghosts, ghost-trail clones, dissolving chips, scramble filler) is excluded with `data-layout-ignore` on each node; never use it to hide real copy.
 2. **Motion map.** Read the timeline code (or the animation map, if your HyperFrames skills ship `animation-map.mjs`). Note:
    - dead zones of 1 s or more with nothing moving;
    - spatial moves shorter than 0.2 s (too fast to read) or longer than 2 s (drifting);
@@ -31,19 +32,20 @@ Run every step. Commands assume a HyperFrames project (`npx hyperframes …`); f
    - 25 / 50 / 75 % of every scene;
    - every seam at −2 frames, 0 and +2 frames.
 
-   `npx hyperframes snapshot --at <t1,t2,…>`. Pass exact frame times (`t = frame / fps`, e.g. frame 316 at 30 fps → `10.5333`); `--at` does not snap, so a rounded time shows an in-between pose the render never contains. Open the images and **look**. Zoom on type only at times the element is visible (zooming on a hidden element can hang).
-4. **Depth proof.** For camera or hero moves, `npx hyperframes keyframes --ghost --angle`. Planes separating along z mean real depth; everything scaling together means fake depth. Even ghost spacing on a hero move means linear easing, which fails. If `--ghost` cannot run, take a scratch copy and give the world's parent a proof camera (push back + pitch + yaw, e.g. `translateZ(-900px) rotateX(-28deg) rotateY(64deg)`; yaw alone puts the camera inside deep scenes), snapshot 4–6 frame times across the move and overlay them (`ffmpeg … -filter_complex blend=all_mode=lighten`).
+   `npx hyperframes snapshot --at <t1,t2,…>`. Pass exact frame times (`t = frame / fps`, e.g. frame 316 at 30 fps → `10.5333`); `--at` does not snap, so a rounded time shows an in-between pose the render never contains. `snapshot` leaves stale PNGs from earlier runs, so move the old `snapshots/` dir aside before each run (e.g. `node -e "require('fs').renameSync('snapshots','snapshots-'+Date.now())"`) rather than deleting with an `rm` glob; `--at` can also add a stray frame you didn't ask for, so ignore extras. Open the images and **look**. Zoom on type only at times the element is visible (zooming on a hidden element can hang).
+4. **Depth proof.** For camera or hero moves, `npx hyperframes keyframes --ghost --angle`. Planes separating along z mean real depth; everything scaling together means fake depth. Even ghost spacing on a hero move means linear easing, which fails. If `--ghost` cannot run, take a scratch copy and give the world's parent a proof camera (push back + pitch + yaw, e.g. `translateZ(-900px) rotateX(-28deg) rotateY(64deg)`; yaw alone puts the camera inside deep scenes), snapshot 4–6 frame times across the move and overlay them (`ffmpeg … -filter_complex blend=all_mode=lighten`). Build this onion by hand for nested perspective (`snapshot --angle side` flattens it) and for JS projection cameras (3D projected onto one SVG/canvas): swap a side camera into the projection function in the scratch copy.
 5. **Real-speed watch.** If a render exists:
    - make a strip: `ffmpeg -i renders/video.mp4 -vf fps=6,scale=360:-1,tile=6x4 strip.jpg`;
    - check duration and the first and last frames with `ffprobe`;
-   - if there is audio, check each hit against the cue sheet (±1 frame).
+   - if there is audio, check each hit against the cue sheet (±1 frame) and true peak ≤ −1 dBTP on the final AAC file (`ffmpeg -i … -af ebur128=peak=true -f null -`);
+   - transparent `.webm` overlays: `ffprobe` shows VP9-alpha as `yuv420p`; verify alpha by decoding with `-c:v libvpx-vp9` before `-i` (stream reads `yuva420p`) or the `ALPHA_MODE=1` tag.
 6. **Code read.** Grep the composition for:
    - `ease:` (list every ease used) and durations;
    - opacity-only entrances and small `y:` offsets (20–40 px);
    - `Math.random` / `Date.now` (non-deterministic);
    - `back.out|elastic|bounce`, `yoyo`, `repeat: -1`;
    - linear or `power1` on spatial moves; eases outside the allowed list (`mg.*`, `power3.out`, `expo.out`, `power3.in`, `power4.out`, `power2.inOut`, `none`, a baked spring);
-   - concurrent tweens sharing an ease (fine only as a locked group: one multi-target tween or a child timeline with `defaults`);
+   - concurrent tweens sharing an ease (fine only as a locked group: one multi-target tween or a child timeline with `defaults`; a setter-driven proxy counts once, by the ease on its tween);
    - a blurred line-mask rise starting below `yPercent 130` (blur leaks into the mask);
    - banned fonts;
    - missing grain, vignette or motion blur.
@@ -103,7 +105,7 @@ A muted, SFX-free piece that declares itself silent in the brief scores Sound sy
 9. **Light event.** At least one: a sweep, gloss, scan band, bloom or leak.
 10. **Sound.** Sound sync if there is audio; otherwise the piece is declared silent.
 11. **Rhythm.**
-    - The slowest beat is about 3× the fastest beat.
+    - The slowest storyboard beat is at least 3× the fastest (beats are storyboard rows, not sub-tweens).
     - Across all tweens, max/min duration is at least 4.
     - The final still holds for at least 0.8 s.
     - The last frame works as a thumbnail.
@@ -169,7 +171,7 @@ Fix order: **delete → reduce → fix easing → fix composition/origin → ret
 
 ## Re-review
 
-After fixes, re-run step 1, step 3 (changed regions and their seams) and step 7. Any retime re-runs `check`: its contrast samples move with the timing. Keep the old scores in `review.md` so the improvement is visible. Stop after 3 polish loops; if the average is still below 4.0, return REWORK.
+Re-reviews go back to the same reviewer. After fixes, re-run step 1, step 3 (changed regions and their seams) and step 7. Any retime re-runs `check`: its contrast samples move with the timing. Keep the old scores in `review.md` so the improvement is visible, and end each round with its own `verdict:` line. Stop after 3 polish loops; if the average is still below 4.0, return REWORK.
 
 ---
 
