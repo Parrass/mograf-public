@@ -24,13 +24,15 @@ Run every step. Commands assume a HyperFrames project (`npx hyperframes …`); f
    - spatial moves shorter than 0.2 s (too fast to read) or longer than 2 s (drifting);
    - irregular or mechanical staggers;
    - elements that leave the frame or collide by accident.
+
+   Motion driven through a proxy/setter object (custom camera, three.js, counters) is invisible to tween-based maps; use frame strips (step 5) for those moves.
 3. **Contact sheet.** From the storyboard or beat list, take scene and seam times. Snapshot:
    - frame 0, the hero moment, and the final frame;
    - 25 / 50 / 75 % of every scene;
    - every seam at −2 frames, 0 and +2 frames.
 
    `npx hyperframes snapshot --at <t1,t2,…>`. Pass exact frame times (`t = frame / fps`, e.g. frame 316 at 30 fps → `10.5333`); `--at` does not snap, so a rounded time shows an in-between pose the render never contains. Open the images and **look**. Zoom on type only at times the element is visible (zooming on a hidden element can hang).
-4. **Depth proof.** For camera or hero moves, `npx hyperframes keyframes --ghost --angle`. Planes separating along z mean real depth; everything scaling together means fake depth. Even ghost spacing on a hero move means linear easing, which fails. If `--ghost` cannot run, take a scratch copy, rotate the stage ~75° on Y, snapshot 4–6 frame times across the move and overlay them (`ffmpeg … -filter_complex blend=all_mode=lighten`).
+4. **Depth proof.** For camera or hero moves, `npx hyperframes keyframes --ghost --angle`. Planes separating along z mean real depth; everything scaling together means fake depth. Even ghost spacing on a hero move means linear easing, which fails. If `--ghost` cannot run, take a scratch copy and give the world's parent a proof camera (push back + pitch + yaw, e.g. `translateZ(-900px) rotateX(-28deg) rotateY(64deg)`; yaw alone puts the camera inside deep scenes), snapshot 4–6 frame times across the move and overlay them (`ffmpeg … -filter_complex blend=all_mode=lighten`).
 5. **Real-speed watch.** If a render exists:
    - make a strip: `ffmpeg -i renders/video.mp4 -vf fps=6,scale=360:-1,tile=6x4 strip.jpg`;
    - check duration and the first and last frames with `ffprobe`;
@@ -40,7 +42,9 @@ Run every step. Commands assume a HyperFrames project (`npx hyperframes …`); f
    - opacity-only entrances and small `y:` offsets (20–40 px);
    - `Math.random` / `Date.now` (non-deterministic);
    - `back.out|elastic|bounce`, `yoyo`, `repeat: -1`;
-   - linear or `power1` on spatial moves;
+   - linear or `power1` on spatial moves; eases outside the allowed list (`mg.*`, `power3.out`, `expo.out`, `power3.in`, `power4.out`, `power2.inOut`, `none`, a baked spring);
+   - concurrent tweens sharing an ease (fine only as a locked group: one multi-target tween or a child timeline with `defaults`);
+   - a blurred line-mask rise starting below `yPercent 130` (blur leaks into the mask);
    - banned fonts;
    - missing grain, vignette or motion blur.
 7. **Score** the 9 dimensions (anchors below), 1–5, each with a one-line reason tied to a time or frame.
@@ -165,7 +169,7 @@ Fix order: **delete → reduce → fix easing → fix composition/origin → ret
 
 ## Re-review
 
-After fixes, re-run step 1, step 3 (changed regions and their seams) and step 7. Keep the old scores in `review.md` so the improvement is visible. Stop after 3 polish loops; if the average is still below 4.0, return REWORK.
+After fixes, re-run step 1, step 3 (changed regions and their seams) and step 7. Any retime re-runs `check`: its contrast samples move with the timing. Keep the old scores in `review.md` so the improvement is visible. Stop after 3 polish loops; if the average is still below 4.0, return REWORK.
 
 ---
 

@@ -21,6 +21,7 @@ gsap.registerPlugin(CustomEase);
 CustomEase.create("mg.enter",  ".20,.75,.34,.94"); // entrances: sharp in, clean landing
 CustomEase.create("mg.settle", ".00,.65,.51,.99"); // landings, lockups, count-ups: fast out, LONG settle
 CustomEase.create("mg.travel", "1,.49,0,.55");     // A→B travel and camera moves
+CustomEase.create("mg.depart", ".33,0,.12,1");     // camera/element leaving FROM REST
 CustomEase.create("mg.exit",   "1,.02,.54,.42");   // exits: accelerate away
 CustomEase.create("mg.cut",    ".15,.85,.95,.05"); // moves interrupted by a cut, never settle
 CustomEase.create("mg.ui",     ".23,1,.32,1");     // UI-in-video micro moves
@@ -29,15 +30,30 @@ CustomEase.create("mg.inout",  ".77,0,.175,1");    // on-screen morphs and refra
 
 The same curves as CSS `cubic-bezier(...)` work in CSS and WAAPI. In Remotion, use `Easing.bezier(...)`.
 
-You may also use these built-ins:
+Two traps:
+- `mg.settle` starts with a vertical tangent: on a rotation or camera move that starts **from rest** (after a click, after a hold) it jolts in one frame. Use `mg.depart` there.
+- `mg.travel` is near-linear and barely moves in the first ~15 % of long (> 1.5 s) reveals. Use `mg.depart` or `mg.inout` for long reveals.
+
+This is the whole allowed list: the `mg.*` tokens plus these built-ins (and a baked spring at damping 0.80–0.85 if you need one). Anything else (`power2.out`, `sine.*`, `power4.in`, …) is off-palette:
 
 - `power3.out`: the workhorse.
 - `expo.out`: entries on a cut.
 - `power3.in`: exits into a cut.
+- `power4.out`: hard camera / hero landings.
+- `power2.inOut`: camera repositioning.
 - `none`: only for loops, marquees, mechanical motion and constant-speed path travel.
 
 Rules:
-- A piece uses at least 3 ease characters. Two tweens running at the same time in a scene don't share an ease unless they move as one group.
+- A piece uses at least 3 ease characters. Two tweens running at the same time in a scene don't share an ease unless they move as one **locked group**: one tween with several targets, or a child timeline with `defaults`, counts as one ease user.
+  ```js
+  tl.fromTo([".card", ".card-label"], { y: 60 }, { y: 0, duration: 0.7, ease: "mg.settle" }, T); // one group
+  const lockup = gsap.timeline({ defaults: { ease: "mg.enter", duration: 0.6 } });           // one group
+  lockup.fromTo(".logo", { scale: 0.94 }, { scale: 1 }, 0).fromTo(".wordmark", { xPercent: -8 }, { xPercent: 0 }, 0.08);
+  tl.add(lockup, T + 0.3);
+  tl.fromTo(".kicker", { yPercent: 105 }, { yPercent: 0, duration: 0.5, ease: "mg.depart" }, T + 0.3); // concurrent → own ease
+  ```
+- Swapping an ease while polishing can create a new collision. After every swap, re-check which tweens overlap in time and what they use.
+- Stagger distribution eases (`stagger: { each, ease }`) are timing offsets, not tween eases; they don't count.
 - Hero spatial moves never use linear, `power1`, CSS `ease` or `ease-in-out`.
 - Overshoot is opt-in: at most one per piece, at most 6 %, on transforms only. `back.out`, `elastic` and `bounce` are out unless the brief asks for a playful register.
 
@@ -76,7 +92,7 @@ Rules:
 
 ## 4. Never do this
 
-- **The default fade-up.** `opacity 0→1, y 20–40→0, power2.out` on anything. Text uses masks, splits, depth, cuts or a light pass instead.
+- **The default fade-up.** `opacity 0→1, y 20–40→0, power2.out` on anything. Text uses masks, splits, depth, cuts or a light pass instead. A line-mask rise (`yPercent → 0` inside an overflow-hidden line) that also blurs on the approach starts at `yPercent ≥ 130`; at 105 the blur halo leaks into the mask before the line moves.
 - **`scale(0)` entrances.** Exceptions: dots, particles and mask circles. Otherwise start at 0.9–0.97.
 - **Uniform timing.** Identical durations, or a uniform 0.1 s stagger.
 - **Idle breathing.** Scale or opacity yoyo pulses on idle elements. Instead, use stillness, one motivated ambient background, or a camera drift that has an end pose.
