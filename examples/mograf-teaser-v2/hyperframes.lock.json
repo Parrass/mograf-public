@@ -1,0 +1,9 @@
+{
+  "compositions/components/camera-rig-depth-stack.html": "d0ab77610390dd1e30ac53347b06e3d6aa432ac972989c18df8593d2a2b6b19e",
+  "compositions/components/extended-keyframe.html": "ec04c80990132e2564ccf1c9cfeb978de4d5eea463acce4957c956a3642892bf",
+  "compositions/components/focus-rack.html": "415d25ac225c7ce5908d0c9ef3ab144bd93b44d40fc0b65fcc853c7254d5573e",
+  "compositions/components/grain-overlay.html": "97a0da8f26feca9574abcf08b8186cef10ea4819b2aeabc30547ae16ed9ae80d",
+  "compositions/components/light-sweep-pass.html": "16f8575923e3deacbbf2a2154bf4ec7c77ae8dd8d588c0ce0b5e25e5eea7376a",
+  "compositions/components/motion-blur.html": "5f88c75e193591f4f6330df2e4f46f6139d110a8d7347da8c46aa1e0ed39956f",
+  "compositions/components/vignette.html": "b825476ca7bb89c0afbd6f1157b9813ac6a1ac82e9aa13a7cecd7ae305ebb2d5"
+}

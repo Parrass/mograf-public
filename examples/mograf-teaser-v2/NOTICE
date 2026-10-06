@@ -1,0 +1,32 @@
+mograf teaser v2 — example kit
+Copyright (c) 2026 mograf (mograf.si). Original work licensed under MIT (see /LICENSE).
+
+This directory contains third-party material:
+
+1. HyperFrames registry code
+   Copyright HeyGen, Inc. and the HyperFrames contributors (github.com/heygen-com/hyperframes)
+   Licensed under the Apache License, Version 2.0 — full text in LICENSES/APACHE-2.0-hyperframes.txt.
+   Files:
+     vendor/hf-motion-blur.js           registry "motion-blur" snippet, unmodified (header added)
+     vendor/hf-extended-keyframe.js     registry "extended-keyframe" snippets, unmodified (header added)
+     compositions/components/*.html     registry installs, unmodified reference copies
+   Adapted (modified) uses: grain-overlay, vignette, light-sweep-pass, focus-rack and
+   camera-rig-depth-stack were used as recipes and re-implemented inline in index.html
+   (marked in comments). The registry "camera-shake" component is NOT included; the impact
+   shake in index.html is an original hand-tuned table (JOLT).
+   You may not use this file except in compliance with the Apache License 2.0. Distributed
+   on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND.
+
+2. gl-transitions "crosswarp"
+   Author: Eke Péter. Copyright (c) 2017-present gl-transitions contributors.
+   MIT License — full text in LICENSES/MIT-gl-transitions.txt.
+   Files: compositions/gl/crosswarp.glsl, compositions/gl/crosswarp.glsl.js (original header kept).
+
+3. Fonts — SIL Open Font License 1.1
+   Instrument Serif — Copyright The Instrument Serif Project Authors (LICENSES/OFL-InstrumentSerif.txt)
+   JetBrains Mono  — Copyright The JetBrains Mono Project Authors (LICENSES/OFL-JetBrainsMono.txt)
+
+Not included (install or source yourself):
+   GSAP 3.14.2 (gsap, CustomEase, SplitText) — npm dependency, GreenSock Standard "No Charge"
+   License (https://gsap.com/standard-license). Not OSI-approved; not redistributed here.
+   Sound effects — see audio-cues.md.

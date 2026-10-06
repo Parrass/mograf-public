@@ -1,0 +1,97 @@
+{
+ "version": 2,
+ "primary": "cut-the-curve",
+ "primaryShare": "5/8",
+ "shaders": 1,
+ "crossfades": 0,
+ "seams": [
+  {
+   "t": 2.7,
+   "from": "b1",
+   "to": "b2",
+   "type": "speed-ramp (pull-back velocity carried into the explode)",
+   "duration": 0.36,
+   "ease": "mg.travel -> EK.ease",
+   "peakBlurPx": 3.5,
+   "shader": null,
+   "sfx": "whoosh"
+  },
+  {
+   "t": 2.88,
+   "from": "hook",
+   "to": "line2",
+   "type": "cut-the-curve (vertical, type)",
+   "duration": 0.3,
+   "ease": "mg.exit -> mg.enter",
+   "peakBlurPx": 6,
+   "shader": null,
+   "sfx": "silence"
+  },
+  {
+   "t": 6.2,
+   "from": "line2",
+   "to": "rack1",
+   "type": "cut-the-curve (vertical)",
+   "duration": 0.73,
+   "ease": "power3.in 0.22 -> expo.out 0.51",
+   "peakBlurPx": "motion-blur 720",
+   "shader": null,
+   "sfx": "click-soft"
+  },
+  {
+   "t": 7.3,
+   "from": "rack1",
+   "to": "rack2",
+   "type": "cut-the-curve (vertical)",
+   "duration": 0.73,
+   "ease": "power3.in 0.22 -> expo.out 0.51",
+   "peakBlurPx": "motion-blur 720",
+   "shader": null,
+   "sfx": "click-soft"
+  },
+  {
+   "t": 8.4,
+   "from": "rack2",
+   "to": "rack3",
+   "type": "cut-the-curve (vertical)",
+   "duration": 0.73,
+   "ease": "power3.in 0.22 -> expo.out 0.51",
+   "peakBlurPx": "motion-blur 720",
+   "shader": null,
+   "sfx": "click-soft"
+  },
+  {
+   "t": 9.5,
+   "from": "rack3",
+   "to": "rack4",
+   "type": "cut-the-curve (vertical)",
+   "duration": 0.73,
+   "ease": "power3.in 0.22 -> expo.out 0.51",
+   "peakBlurPx": "motion-blur 720",
+   "shader": null,
+   "sfx": "click-soft"
+  },
+  {
+   "t": 10.9,
+   "from": "open stack",
+   "to": "closed stack",
+   "type": "smash (impact)",
+   "duration": 0,
+   "ease": "mg.exit",
+   "peakBlurPx": 0,
+   "shader": null,
+   "sfx": "impact-bass-1"
+  },
+  {
+   "t": 11.5333,
+   "from": "flat diamond (piece)",
+   "to": "clay diamond (same size/place = the mark)",
+   "type": "shader (shape match)",
+   "duration": 0.6,
+   "ease": "mg.settle",
+   "peakBlurPx": null,
+   "shader": "compositions/gl/crosswarp.glsl",
+   "sfx": "whoosh-cinematic"
+  }
+ ]
+}

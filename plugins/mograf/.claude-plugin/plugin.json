@@ -1,0 +1,10 @@
+{
+  "name": "mograf",
+  "version": "1.0.0",
+  "description": "Free mograf motion skills: motion-review (studio critic and quality gate) and motion-craft-lite (ease tokens, durations, choreography, anti-slop rules).",
+  "author": { "name": "mograf", "url": "https://mograf.si" },
+  "homepage": "https://mograf.si",
+  "license": "MIT",
+  "keywords": ["motion", "motion-graphics", "animation", "video", "hyperframes", "gsap", "remotion"],
+  "skills": "./skills/"
+}

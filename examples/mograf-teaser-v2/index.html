@@ -1,0 +1,946 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1080" />
+    <title>mograf teaser v2 — Anatomy</title>
+    <!-- GSAP is an npm dependency (not redistributed here): run `npm install` first. -->
+    <script src="node_modules/gsap/dist/gsap.min.js"></script>
+    <script src="node_modules/gsap/dist/CustomEase.min.js"></script>
+    <script src="node_modules/gsap/dist/SplitText.min.js"></script>
+    <script src="vendor/hf-extended-keyframe.js"></script>
+    <style>
+      @font-face {
+        font-family: "Instrument Serif";
+        src: url("fonts/InstrumentSerif-Regular.ttf") format("truetype");
+        font-weight: 400;
+        font-style: normal;
+        font-display: block;
+      }
+      @font-face {
+        font-family: "Instrument Serif";
+        src: url("fonts/InstrumentSerif-Italic.ttf") format("truetype");
+        font-weight: 400;
+        font-style: italic;
+        font-display: block;
+      }
+      @font-face {
+        font-family: "JetBrains Mono";
+        src: url("fonts/JetBrainsMono-VF.ttf") format("truetype");
+        font-weight: 100 800;
+        font-style: normal;
+        font-display: block;
+      }
+
+      :root {
+        --slate: #141413;
+        --g1: #1f1e1d;
+        --g2: #262624;
+        --g3: #3d3d3a;
+        --g4: #9c9a92;
+        --ivory: #faf9f5;
+        --clay: #d97757;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1080px;
+        height: 1080px;
+        overflow: hidden;
+        background: #141413;
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-color: #141413;
+        color: #faf9f5;
+        font-family: "JetBrains Mono", monospace;
+        font-kerning: normal;
+      }
+      .layer {
+        position: absolute;
+        inset: 0;
+      }
+
+      /* ---------- 0.2x plane: the room (radial key light, never flat) ---------- */
+      #room {
+        background-color: #141413;
+        background-image: radial-gradient(130% 100% at 50% 45%, #1b1a19 0%, #141413 55%, #0f0f0e 100%);
+      }
+      #key {
+        position: absolute;
+        left: -260px;
+        top: -300px;
+        width: 1300px;
+        height: 1300px;
+        border-radius: 50%;
+        background: radial-gradient(closest-side, rgba(217, 119, 87, 0.16), rgba(217, 119, 87, 0.05) 55%, rgba(217, 119, 87, 0) 100%);
+      }
+      #floor {
+        position: absolute;
+        left: 90px;
+        right: 90px;
+        bottom: 60px;
+        height: 260px;
+        border-radius: 50%;
+        background: radial-gradient(closest-side, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0));
+        opacity: 0;
+      }
+
+      /* ---------- 1.0x plane: the world (camera rig) ---------- */
+      #lens {
+        overflow: hidden;
+      }
+      #rig {
+        position: absolute;
+        inset: 0;
+      }
+      #stage {
+        position: absolute;
+        inset: 0;
+        perspective: 1700px;
+        perspective-origin: 50% 46%;
+      }
+      #world {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1080px;
+        height: 1080px;
+        transform-style: preserve-3d;
+        transform-origin: 50% 50% 0;
+      }
+      #spin {
+        position: absolute;
+        inset: 0;
+        transform-style: preserve-3d;
+        transform-origin: 50% 50% 0;
+      }
+      .plane {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1080px;
+        height: 1080px;
+        overflow: hidden;
+        backface-visibility: hidden;
+      }
+      .glass {
+        background-color: rgba(31, 30, 29, 0.94);
+        border: 2px solid rgba(250, 249, 245, 0.12);
+        border-radius: 22px;
+        box-shadow: 0 60px 140px -30px rgba(0, 0, 0, 0.85);
+      }
+      .plabel {
+        position: absolute;
+        left: 70px;
+        bottom: 62px;
+        font: 400 30px/1 "JetBrains Mono", monospace;
+        letter-spacing: 0.04em;
+        color: #9c9a92;
+        display: flex;
+        gap: 22px;
+        align-items: center;
+      }
+      .plabel b {
+        font-weight: 700;
+        color: #d97757;
+      }
+      .plabel .pd {
+        width: 14px;
+        height: 14px;
+        background: #d97757;
+        transform: rotate(45deg);
+      }
+      .prule {
+        position: absolute;
+        left: 70px;
+        right: 70px;
+        bottom: 124px;
+        height: 2px;
+        background: rgba(250, 249, 245, 0.1);
+      }
+
+      /* the piece (front plane) */
+      #p-piece {
+        background-color: #1f1e1d;
+        background-image: radial-gradient(90% 60% at 72% 58%, rgba(217, 119, 87, 0.3), rgba(217, 119, 87, 0) 70%),
+          linear-gradient(180deg, #1f1e1d 0%, #1f1e1d 58%, #171615 58.2%, #121211 100%);
+        border-radius: 0px;
+      }
+      #p-piece .meta {
+        position: absolute;
+        top: 66px;
+        font: 400 26px/1 "JetBrains Mono", monospace;
+        letter-spacing: 0.06em;
+        color: #9c9a92;
+      }
+      #sunwell {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1080px;
+        height: 628px;
+        overflow: hidden;
+      }
+      #sun {
+        position: absolute;
+        left: 646px;
+        top: 360px;
+        width: 360px;
+        height: 360px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 45% 40%, #e48a6b 0%, #d97757 55%, #c9684a 100%);
+      }
+      #horizon {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 627px;
+        height: 2px;
+        background: rgba(250, 249, 245, 0.34);
+      }
+      #glint {
+        position: absolute;
+        left: 676px;
+        top: 650px;
+        width: 300px;
+        height: 120px;
+        background: radial-gradient(closest-side, rgba(217, 119, 87, 0.3), rgba(217, 119, 87, 0));
+      }
+      #arrival {
+        position: absolute;
+        left: 64px;
+        top: 292px;
+        font: italic 400 250px/1 "Instrument Serif", serif;
+        letter-spacing: -0.035em;
+        color: #faf9f5;
+        white-space: nowrap;
+      }
+
+      /* back planes */
+      .ptext {
+        position: absolute;
+        left: 70px;
+        right: 70px;
+        bottom: 170px;
+        color: #faf9f5;
+      }
+      #p-prompt .ptext {
+        font: 400 52px/1.42 "JetBrains Mono", monospace;
+        letter-spacing: -0.01em;
+      }
+      #p-prompt .ptext .gt {
+        color: #d97757;
+      }
+      #p-skills .ptext {
+        font: 400 50px/1.62 "JetBrains Mono", monospace;
+      }
+      #p-skills .ptext div {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+      }
+      #p-skills .ptext i {
+        display: block;
+        width: 18px;
+        height: 18px;
+        background: #d97757;
+        transform: rotate(45deg);
+        flex: none;
+      }
+      #p-skills .ptext span.d {
+        color: #9c9a92;
+      }
+      #p-source .ptext {
+        font: 400 34px/1.6 "JetBrains Mono", monospace;
+        white-space: pre;
+        color: #c9c6bc;
+      }
+      #p-source .k {
+        color: #d97757;
+      }
+      #p-source .s {
+        color: #faf9f5;
+      }
+      #p-source .c {
+        color: #8e8b83;
+      }
+      #p-source .n {
+        color: #8e8b83;
+        display: inline-block;
+        width: 64px;
+      }
+      #p-copy .quote {
+        position: absolute;
+        left: 70px;
+        right: 90px;
+        bottom: 230px;
+        font: 400 112px/1.04 "Instrument Serif", serif;
+        letter-spacing: -0.02em;
+        color: #faf9f5;
+      }
+      #p-copy .quote em {
+        color: #d97757;
+      }
+      #p-copy .xmeta {
+        position: absolute;
+        left: 70px;
+        bottom: 170px;
+        font: 400 30px/1.4 "JetBrains Mono", monospace;
+        color: #9c9a92;
+      }
+
+      /* ---------- screen-space type (HUD) ---------- */
+      .serif {
+        font-family: "Instrument Serif", serif;
+        font-weight: 400;
+      }
+      #hook {
+        position: absolute;
+        left: 65px;
+        top: 842px;
+        width: 950px;
+        font: 400 104px/1 "Instrument Serif", serif;
+        letter-spacing: -0.03em;
+        color: #faf9f5;
+      }
+      #hook em {
+        font-style: italic;
+        color: #faf9f5;
+      }
+      #line2 {
+        position: absolute;
+        left: 65px;
+        top: 806px;
+        width: 760px;
+        font: 400 92px/1.02 "Instrument Serif", serif;
+        letter-spacing: -0.03em;
+        color: #faf9f5;
+      }
+      #line2 em {
+        font-style: italic;
+        color: #d97757;
+      }
+      #tag {
+        position: absolute;
+        left: 65px;
+        top: 65px;
+        font: 400 24px/1 "JetBrains Mono", monospace;
+        letter-spacing: 0.08em;
+        text-transform: lowercase;
+        color: #9c9a92;
+        display: flex;
+        gap: 18px;
+        align-items: center;
+      }
+      #tag i {
+        width: 12px;
+        height: 12px;
+        background: #d97757;
+        transform: rotate(45deg);
+        display: block;
+      }
+      #rack {
+        position: absolute;
+        left: 65px;
+        top: 740px;
+        width: 950px;
+        height: 275px;
+      }
+      .ritem {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 40px;
+        bottom: 0;
+        overflow: hidden;
+      }
+      .ridx {
+        position: absolute;
+        left: 4px;
+        top: 4px;
+        font: 400 26px/1 "JetBrains Mono", monospace;
+        letter-spacing: 0.08em;
+        color: #9c9a92;
+      }
+      .dmask {
+        position: relative;
+        display: inline-block;
+        width: 2.4ch;
+        height: 1.15em;
+        overflow: hidden;
+        vertical-align: top;
+      }
+      .dmask b {
+        position: absolute;
+        left: 0;
+        top: 0;
+        display: block;
+      }
+      .ridx b {
+        color: #d97757;
+        font-weight: 700;
+      }
+      .rword {
+        position: absolute;
+        left: 0;
+        top: 18px;
+        font: italic 400 190px/1.0 "Instrument Serif", serif;
+        letter-spacing: -0.035em;
+        color: #faf9f5;
+        white-space: nowrap;
+      }
+
+      /* lockup */
+      #lockup {
+        position: absolute;
+        inset: 0;
+      }
+      #mark {
+        position: absolute;
+        left: 82px;
+        top: 392px;
+        width: 92px;
+        height: 92px;
+        background: #d97757;
+      }
+      #wordmark {
+        position: absolute;
+        left: 222px;
+        top: 352px;
+        font: 500 168px/1 "JetBrains Mono", monospace;
+        letter-spacing: -0.045em;
+        color: #faf9f5;
+        --w: 500;
+        font-variation-settings: "wght" var(--w);
+      }
+      #tagline {
+        position: absolute;
+        left: 65px;
+        top: 586px;
+        width: 900px;
+        font: 400 76px/1.06 "Instrument Serif", serif;
+        letter-spacing: -0.025em;
+        color: #faf9f5;
+      }
+      #tagline em {
+        font-style: italic;
+      }
+      #url {
+        position: absolute;
+        left: 65px;
+        top: 948px;
+        font: 400 34px/1 "JetBrains Mono", monospace;
+        letter-spacing: 0.02em;
+        color: #faf9f5;
+        display: flex;
+        align-items: center;
+        gap: 22px;
+      }
+      #url i {
+        display: block;
+        width: 56px;
+        height: 3px;
+        background: #d97757;
+      }
+      #lockmeta {
+        position: absolute;
+        right: 65px;
+        top: 960px;
+        font: 400 22px/1 "JetBrains Mono", monospace;
+        letter-spacing: 0.08em;
+        color: #9c9a92;
+      }
+      #markgrp {
+        position: absolute;
+        inset: 0;
+        transform-origin: 128px 438px;
+      }
+      .echo {
+        position: absolute;
+        left: 82px;
+        top: 392px;
+        width: 92px;
+        height: 92px;
+        border: 2px solid rgba(250, 249, 245, 0.22);
+      }
+
+      #wmgloss {
+        position: absolute;
+        left: 222px;
+        top: 352px;
+        font: 500 168px/1 "JetBrains Mono", monospace;
+        letter-spacing: -0.045em;
+        font-variation-settings: "wght" 500;
+        color: transparent;
+        background-image: linear-gradient(105deg, rgba(255, 240, 228, 0) 42%, rgba(255, 240, 228, 0.6) 50%, rgba(255, 240, 228, 0) 58%);
+        background-size: 300% 100%;
+        background-repeat: no-repeat;
+        -webkit-background-clip: text;
+        background-clip: text;
+        pointer-events: none;
+      }
+      #warp {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1080px;
+        height: 1080px;
+        visibility: hidden;
+      }
+      .cap-src {
+        display: none;
+      }
+
+      /* ---------- finishing ---------- */
+      #hf-vignette {
+        background: radial-gradient(ellipse at 50% 46%, rgba(0, 0, 0, 0) 52%, rgba(0, 0, 0, 0.42) 100%);
+        pointer-events: none;
+      }
+      #grain-overlay {
+        pointer-events: none;
+        overflow: hidden;
+        mix-blend-mode: overlay;
+        opacity: 0.07;
+      }
+      #grain-overlay .grain-texture {
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="15.5" data-width="1080" data-height="1080" data-fps="30">
+      <!-- 0.2x: the room -->
+      <div id="room" class="layer">
+        <div id="key"></div>
+        <div id="floor"></div>
+      </div>
+
+      <!-- 1.0x: the world under one camera -->
+      <div id="lens" class="layer camera-shake-frame">
+        <div id="rig" class="camera-shake-rig">
+          <div id="stage">
+            <div id="world"><div id="spin">
+              <!-- back to front: prompt (origin) → skills → source → copy → the piece -->
+              <div id="p-prompt" class="plane glass">
+                <div class="plabel" data-layout-allow-overlap><b>01</b><span>prompt</span></div>
+                <div class="prule"></div>
+                <div class="ptext" data-layout-allow-overlap><span class="gt">&gt;</span> a 12 s arrival film. slate ground, a clay sun clearing the horizon, one serif word, held still at the end.</div>
+              </div>
+              <div id="p-skills" class="plane glass">
+                <div class="plabel" data-layout-allow-overlap><b>02</b><span>skills</span></div>
+                <div class="prule"></div>
+                <div class="ptext" data-layout-allow-overlap>
+                  <div><i></i>motion-craft</div>
+                  <div><i></i>motion-design</div>
+                  <div><i></i>type-choreography</div>
+                  <div><i></i>depth-3d</div>
+                  <div><i></i>transitions</div>
+                  <div><i></i>sound-sync</div>
+                </div>
+              </div>
+              <div id="p-source" class="plane glass">
+                <div class="plabel" data-layout-allow-overlap><b>03</b><span>source · index.html</span></div>
+                <div class="prule"></div>
+                <div class="ptext" data-layout-allow-overlap><span class="n">12</span><span class="c">// the sun clears the horizon</span>
+<span class="n">13</span><span class="k">tl</span>.fromTo(<span class="s">"#sun"</span>,
+<span class="n">14</span>  { y: <span class="k">220</span> },
+<span class="n">15</span>  { y: <span class="k">0</span>, duration: <span class="k">2.4</span>,
+<span class="n">16</span>    ease: <span class="s">"mg.settle"</span> }, <span class="k">0.4</span>);
+<span class="n">17</span>
+<span class="n">18</span><span class="c">// one word, line-masked</span>
+<span class="n">19</span><span class="k">tl</span>.fromTo(word.lines,
+<span class="n">20</span>  { yPercent: <span class="k">105</span> },
+<span class="n">21</span>  { yPercent: <span class="k">0</span>, ease: <span class="s">"mg.enter"</span> },
+<span class="n">22</span>  <span class="k">1.1</span>);</div>
+              </div>
+              <div id="p-copy" class="plane glass">
+                <div class="plabel" data-layout-allow-overlap><b>04</b><span>copy · x caption</span></div>
+                <div class="prule"></div>
+                <div class="quote" data-layout-allow-overlap>Ever seen a sunrise <em>land on a beat?</em></div>
+                <div class="xmeta" data-layout-allow-overlap>hook 1 of 3 · 41 chars · no hashtags</div>
+              </div>
+              <div id="p-piece" class="plane">
+                <div id="sunwell"><div id="sun" data-layout-allow-overflow></div></div>
+                <div id="glint"></div>
+                <div id="horizon"></div>
+                <div id="arrival" data-layout-allow-overlap>arrival</div>
+                <div class="meta" data-layout-allow-overlap style="left: 70px">piece 027</div>
+                <div class="meta" data-layout-allow-overlap style="right: 70px">12 s · 1:1</div>
+              </div>
+            </div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- screen-space type -->
+      <div id="hud" class="layer">
+        <div id="hook">One prompt made <em>this.</em></div>
+        <div id="tag"><i></i><span>anatomy of piece 027</span></div>
+        <div id="line2">Every piece ships with <em>what made it.</em></div>
+        <div id="rack">
+          <div class="ridx" id="ridx"><span class="dmask"><b id="d1">01</b><b id="d2">02</b><b id="d3">03</b><b id="d4">04</b></span><span class="dof"> / 04</span></div>
+          <div class="ritem" id="ri1"><div class="rword" id="rw1">prompt</div></div>
+          <div class="ritem" id="ri2"><div class="rword" id="rw2">skills</div></div>
+          <div class="ritem" id="ri3"><div class="rword" id="rw3">source</div></div>
+          <div class="ritem" id="ri4"><div class="rword" id="rw4">copy</div></div>
+        </div>
+        <div id="lockup">
+          <div id="markgrp">
+          <div class="echo" id="e4"></div>
+          <div class="echo" id="e3"></div>
+          <div class="echo" id="e2"></div>
+          <div class="echo" id="e1"></div>
+          <div id="mark"></div>
+          </div>
+          <div id="wordmark">mograf</div>
+          <div id="tagline">Motion graphics, <em>one prompt away.</em></div>
+          <div id="url"><i></i><span>mograf.si</span></div>
+          <div id="lockmeta">prompt · skills · source · copy</div>
+          <div id="wmgloss" aria-hidden="true">mograf</div>
+        </div>
+      </div>
+
+      <canvas id="warp" width="1080" height="1080" data-layout-ignore></canvas>
+      <img class="cap-src" id="cap-from" src="assets/seam-from.png" alt="" />
+      <img class="cap-src" id="cap-to" src="assets/seam-to.png" alt="" />
+
+      <!-- SFX removed in the public copy (Pixabay files are not redistributed). See audio-cues.md to re-add them. -->
+      <div id="hf-vignette" class="layer"></div>
+      <div id="grain-overlay" class="layer"><div class="grain-texture"></div></div>
+    </div>
+
+    <script src="vendor/hf-motion-blur.js"></script>
+    <script src="compositions/gl/crosswarp.glsl.js"></script>
+    <script>
+/* mograf teaser v2 — "Anatomy". One paused root timeline, seek-safe, deterministic.
+   House doctrine: mograf motion-craft (free subset: plugins/mograf/skills/motion-craft-lite). Beat times: beats.json (frame-snapped at 30 fps). */
+(function () {
+  "use strict";
+  // Set to true ONLY by scripts/capture-seam.sh (hides grain, vignette and the warp canvas
+  // so the shader's from/to textures are clean captures of the live composition).
+  var CAPTURE = false;
+
+  var FPS = 30;
+  var snap = function (t) { return Math.round(t * FPS) / FPS; };
+
+  // ---- beat clock (beats.json) ----
+  var B = {
+    pull0: 0.2, explode: snap(2.7), line2: snap(2.95), hookOut: snap(2.58),
+    hold2: snap(4.2),
+    rack: [snap(6.2), snap(7.3), snap(8.4), snap(9.5)],
+    rackEnd: snap(10.6), slamGo: snap(10.72), impact: snap(10.9),
+    flat0: snap(10.95), seam0: 346 / FPS, seam1: 364 / FPS, land: 378 / FPS,
+    word: snap(12.65), tagline: snap(12.85), url: snap(13.1), meta: snap(13.25),
+    sweep0: snap(13.1), sweep1: snap(14.0), end: 15.5
+  };
+
+  gsap.registerPlugin(CustomEase, SplitText);
+  CustomEase.create("mg.enter", ".20,.75,.34,.94");
+  CustomEase.create("mg.settle", ".00,.65,.51,.99");
+  CustomEase.create("mg.travel", "1,.49,0,.55");
+  CustomEase.create("mg.exit", "1,.02,.54,.42");
+  CustomEase.create("mg.cut", ".15,.85,.95,.05");
+  CustomEase.create("mg.ui", ".23,1,.32,1");
+  CustomEase.create("mg.inout", ".77,0,.175,1");
+
+  // Seek-safe driver: GSAP writes `t` through a setter on every render, seeks included
+  // (onUpdate callbacks are suppressed on seek).
+  function driver(tl, at, dur, fn) {
+    var d = {}, v = 0;
+    Object.defineProperty(d, "t", { get: function () { return v; }, set: function (n) { v = n; fn(n); } });
+    tl.fromTo(d, { t: 0 }, { t: dur, duration: dur, ease: "none", immediateRender: false }, at);
+    fn(0);
+    return d;
+  }
+
+  function hash(i, seed) {
+    var a = (i * 9973 + seed * 7919) | 0;
+    a = (a + 0x6d2b79f5) | 0;
+    var t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  }
+
+  function loadImg(el) {
+    return new Promise(function (res) {
+      if (el.complete && el.naturalWidth) return res(el);
+      el.onload = function () { res(el); };
+      el.onerror = function () { res(null); };
+    });
+  }
+
+  // ---------------------------------------------------------------- shader seam
+  // gl-transitions "crosswarp" (Eke Péter, MIT) ported to the u_from/u_to/u_progress
+  // contract — compositions/gl/crosswarp.glsl. Runs on real captures of the composition.
+  function makeWarp(canvas, imgFrom, imgTo, fragSrc) {
+    var gl = canvas.getContext("webgl", { preserveDrawingBuffer: true, premultipliedAlpha: false, antialias: false });
+    if (!gl || !imgFrom || !imgTo) return null;
+    var vs = "attribute vec2 a_pos; varying vec2 v_uv; void main(){ v_uv = a_pos*0.5+0.5; gl_Position = vec4(a_pos,0.,1.); }";
+    function sh(type, src) { var s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; }
+    var pr = gl.createProgram();
+    gl.attachShader(pr, sh(gl.VERTEX_SHADER, vs));
+    gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, fragSrc));
+    gl.linkProgram(pr);
+    gl.useProgram(pr);
+    var buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+    var loc = gl.getAttribLocation(pr, "a_pos");
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    function tex(unit, img) {
+      var t = gl.createTexture();
+      gl.activeTexture(gl.TEXTURE0 + unit);
+      gl.bindTexture(gl.TEXTURE_2D, t);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    }
+    tex(0, imgFrom);
+    tex(1, imgTo);
+    gl.uniform1i(gl.getUniformLocation(pr, "u_from"), 0);
+    gl.uniform1i(gl.getUniformLocation(pr, "u_to"), 1);
+    gl.uniform2f(gl.getUniformLocation(pr, "u_resolution"), canvas.width, canvas.height);
+    var uP = gl.getUniformLocation(pr, "u_progress");
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    return function render(p) { gl.uniform1f(uP, p); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); };
+  }
+
+  Promise.all([
+    document.fonts.ready,
+    loadImg(document.getElementById("cap-from")),
+    loadImg(document.getElementById("cap-to")),
+    Promise.resolve(window.GLSL_CROSSWARP || null)
+  ]).then(function (res) {
+    var imgFrom = res[1], imgTo = res[2], frag = res[3];
+    var tl = gsap.timeline({ paused: true });
+    var $ = function (s) { return document.querySelector(s); };
+
+    // The five planes are stacked in 3D on purpose: every text node on them is intentional layering.
+    document.querySelectorAll(".plane, .plane *").forEach(function (n) { n.setAttribute("data-layout-allow-overlap", ""); });
+
+    // ============================================================ static rest poses
+    gsap.set("#mark", { rotation: 45 });
+    gsap.set(".echo", { rotation: 45 });
+    var PLANES = ["#p-prompt", "#p-skills", "#p-source", "#p-copy", "#p-piece"];
+    var Z = [-680, -510, -340, -170, 0];
+
+    // ============================================================ visibility clock
+    // Discrete switches are a pure function of t (no zero-duration sets to revert).
+    var vis = function (el, on) { el.style.visibility = on ? "visible" : "hidden"; };
+    var E = {
+      hook: $("#hook"), tag: $("#tag"), line2: $("#line2"), rack: $("#rack"), lockup: $("#lockup"),
+      lens: $("#lens"), warp: $("#warp"), grain: $("#grain-overlay"), vig: $("#hf-vignette"),
+      gt: $("#grain-overlay .grain-texture"), floor: $("#floor"),
+      ri: [1, 2, 3, 4].map(function (n) { return $("#ri" + n); }),
+      back: ["#p-prompt", "#p-skills", "#p-source", "#p-copy"].map(function (q) { return $(q); })
+    };
+    var warpRender = CAPTURE ? null : (frag ? makeWarp(E.warp, imgFrom, imgTo, frag) : null);
+    function clock(t) {
+      vis(E.hook, t < B.explode + 0.2);
+      vis(E.line2, t >= B.line2 - 0.01 && t < B.rack[0] + 0.02);
+      vis(E.tag, t >= B.explode && t < B.rackEnd + 0.35);
+      vis(E.rack, t >= B.rack[0] && t < B.rackEnd + 0.05);
+      for (var k = 0; k < 4; k++) {
+        var a = B.rack[k], b = k < 3 ? B.rack[k + 1] : B.rackEnd;
+        vis(E.ri[k], t >= a && t < b + 0.01);
+      }
+      vis(E.lens, t < B.seam1);
+      // back layers are fully covered by the piece while the stack is closed: don't paint them
+      E.back.forEach(function (el) { vis(el, t >= B.explode && t < B.impact); });
+      vis(E.lockup, t >= B.seam1);
+      var seam = !CAPTURE && !!warpRender && t >= B.seam0 && t < B.seam1;
+      vis(E.warp, seam);
+      // grain on twos-of-twelve: offset re-seeded 12x per second (motion-craft §5 texture)
+      var step = Math.floor(t * 12);
+      E.gt.style.transform = "translate(" + (-12 + 24 * hash(step, 3)).toFixed(2) + "%," + (-12 + 24 * hash(step, 11)).toFixed(2) + "%)";
+    }
+    if (CAPTURE) { E.grain.style.display = "none"; E.vig.style.display = "none"; }
+    driver(tl, 0, B.end, clock);
+
+    // ============================================================ BEAT 1 — the piece, pull-back
+    // The piece is playing: its sun clears the horizon (motivated ambient with an end pose).
+    tl.fromTo("#sun", { y: 110 }, { y: 0, duration: 2.5, ease: "mg.settle" }, 0);
+    tl.fromTo("#glint", { opacity: 0.35, scaleX: 0.7 }, { opacity: 1, scaleX: 1, duration: 2.5, ease: "mg.settle" }, 0);
+    // Camera backs off the poster and tilts: it is an object in a room (Linear tilt pose, inverted).
+    tl.fromTo("#world", { x: 0, y: 0, z: 0, rotationX: 0 },
+      { x: 30, y: -24, z: -360, rotationX: 9, duration: B.explode - B.pull0, ease: "mg.travel" }, B.pull0);
+    tl.fromTo("#p-piece", { borderRadius: 0 }, { borderRadius: 22, duration: 1.6, ease: "mg.settle" }, 0.6);
+    tl.fromTo("#key", { x: 0, y: 0 }, { x: 8, y: -6, duration: B.explode - B.pull0, ease: "mg.inout" }, B.pull0);
+    // Hook exits by mask — the transition is the exit (down = dismiss).
+    var hookSplit = SplitText.create("#hook", { type: "lines", mask: "lines" });
+    tl.fromTo(hookSplit.lines, { yPercent: 0 }, { yPercent: 112, duration: 0.3, ease: "mg.exit" }, B.hookOut);
+
+    // ============================================================ BEAT 2 — SNAP: the piece explodes
+    // Planes: extended-keyframe arrival (80% of the depth in the first fifth, then a creep).
+    var EKE = window.EK.ease();
+    PLANES.forEach(function (sel, i) {
+      if (Z[i] === 0) return;
+      tl.fromTo(sel, { z: 0 }, { z: Z[i], duration: 1.8, ease: EKE }, B.explode + (4 - i) * 0.02);
+    });
+    // Camera: one leg into the isometric pose — fast out, long settle; calmer than the planes.
+    tl.fromTo("#world", { x: 30, y: -24, z: -360, rotationX: 9 },
+      { x: 200, y: -300, z: -1650, rotationX: 52, duration: 2.5, ease: "mg.settle", immediateRender: false }, B.explode);
+    tl.fromTo("#spin", { rotation: 0 }, { rotation: 45, duration: 2.3, ease: "mg.settle" }, B.explode);
+    tl.fromTo("#key", { x: 8, y: -6 }, { x: 40, y: -60, duration: 2.5, ease: "mg.settle", immediateRender: false }, B.explode);
+    tl.fromTo("#floor", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 1.4, ease: "mg.settle" }, B.explode + 0.1);
+    // Travel blur on the stage at the snap (directional smear lives on the stage, never on preserve-3d).
+    tl.fromTo("#stage", { filter: "blur(0px)" }, { filter: "blur(3.5px)", duration: 0.08, ease: "none" }, B.explode);
+    tl.fromTo("#stage", { filter: "blur(3.5px)" }, { filter: "blur(0px)", duration: 0.34, ease: "mg.settle", immediateRender: false }, B.explode + 0.08);
+
+    // Tag: clip wipe from the left margin.
+    tl.fromTo("#tag", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.5, ease: "mg.enter" }, B.explode + 0.15);
+    // Line 2: line masks, blur on the approach only, lands sharp, holds 2.6 s.
+    var l2 = SplitText.create("#line2", { type: "lines", mask: "lines" });
+    tl.fromTo(l2.lines, { yPercent: 105, rotate: 3, filter: "blur(6px)", transformOrigin: "0% 100%" },
+      { yPercent: 0, rotate: 0, filter: "blur(0px)", duration: 0.62, ease: "mg.enter", stagger: { each: 0.09, ease: "power2.in" } }, B.line2);
+
+    // Light event 1: a warm specular band crosses the top plane while the camera lands.
+    // (light-sweep-pass recipe: one property owns the pass; band masked to the plane by overflow:hidden.)
+    var band = document.createElement("div");
+    band.id = "pband";
+    band.setAttribute("data-layout-allow-overflow", "");
+    band.style.cssText = "position:absolute;left:-700px;top:-200px;width:520px;height:1500px;pointer-events:none;mix-blend-mode:screen;background:linear-gradient(90deg,rgba(250,236,226,0) 0%,rgba(250,236,226,.13) 50%,rgba(250,236,226,0) 100%);";
+    $("#p-piece").appendChild(band);
+    tl.fromTo(band, { x: 0, rotation: 18 }, { x: 2400, rotation: 18, duration: 1.6, ease: "mg.inout" }, B.hold2);
+
+    // ============================================================ BEAT 3 — four rack ticks
+    // Line 2 exits up as rack word 1 rises (cut-the-curve, vertical, velocity-matched 0.22 → 0.51).
+    tl.fromTo(l2.lines, { yPercent: 0 }, { yPercent: -108, duration: 0.22, ease: "power3.in", stagger: 0.03, immediateRender: false }, B.rack[0] - 0.22);
+    var RW = ["#rw1", "#rw2", "#rw3", "#rw4"];
+    tl.fromTo("#ridx", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.35, ease: "mg.enter" }, B.rack[0] + 0.04);
+    tl.fromTo("#ridx", { clipPath: "inset(0 0% 0 0)" }, { clipPath: "inset(0 0% 0 100%)", duration: 0.2, ease: "mg.exit", immediateRender: false }, B.rackEnd - 0.2);
+    var FOCUS = [0, 1, 2, 3]; // plane index in PLANES (prompt, skills, source, copy)
+    // Camera reposition leg (motivated: makes room bottom-left for the rack words), clear end pose.
+    tl.fromTo("#world", { x: 200, y: -300 }, { x: 265, y: -330, duration: 0.9, ease: "mg.travel", immediateRender: false }, B.rack[0] - 0.6);
+    tl.fromTo("#key", { x: 40, y: -60 }, { x: 64, y: -66, duration: 0.9, ease: "mg.travel", immediateRender: false }, B.rack[0] - 0.6);
+    // Open the deck at layer k: every layer above it rises by G along the stack normal (z only, so
+    // planes never intersect) — a wave that travels up the stack, one page per tick.
+    var G = 380;
+    var lift = function (k) { return PLANES.map(function (_, i) { return k >= 0 && i > FOCUS[k] ? Z[i] + G : Z[i]; }); };
+    var zPrev = lift(-1);
+    [0, 1, 2, 3, -1].forEach(function (k, step) {
+      var at = step < 4 ? B.rack[step] : B.rackEnd - 0.3;
+      var zNext = lift(k);
+      PLANES.forEach(function (sel, i) {
+        if (zPrev[i] === zNext[i]) return;
+        tl.fromTo(sel, { z: zPrev[i] }, { z: zNext[i], duration: step < 4 ? 0.55 : 0.3, ease: step < 4 ? "mg.ui" : "mg.exit", immediateRender: false }, at - 0.04);
+      });
+      zPrev = zNext;
+    });
+    RW.forEach(function (sel, k) {
+      var T = B.rack[k], Tn = k < 3 ? B.rack[k + 1] : B.rackEnd;
+      // entry at peak velocity: expo.out 0.51 s matches the 0.22 s power3.in exit (D_in = 2.31·D_out)
+      tl.fromTo(sel, { yPercent: 108 }, { yPercent: 0, duration: 0.51, ease: "expo.out" }, T);
+      tl.fromTo("#d" + (k + 1), { yPercent: 110 }, { yPercent: 0, duration: 0.3, ease: "expo.out" }, T);
+      if (k < 3) tl.fromTo("#d" + (k + 1), { yPercent: 0 }, { yPercent: -110, duration: 0.12, ease: "power3.in", immediateRender: false }, Tn - 0.12);
+      tl.fromTo(sel, { yPercent: 0 }, { yPercent: -108, duration: 0.22, ease: "power3.in", immediateRender: false }, Tn - 0.22);
+    });
+    // Depth of field: rack focus to the pulled layer; everything else 5 px + dimmed. Leaf planes only.
+    var focusState = function (k) {
+      return PLANES.map(function (_, i) {
+        if (k < 0) return "blur(0px) brightness(1)";
+        return i === FOCUS[k] ? "blur(0px) brightness(1.06)" : "blur(5px) brightness(0.55)";
+      });
+    };
+    var prev = focusState(-1);
+    [0, 1, 2, 3, -1].forEach(function (k, step) {
+      var at = step < 4 ? B.rack[step] : B.rackEnd;
+      var next = focusState(k);
+      PLANES.forEach(function (sel, i) {
+        tl.fromTo(sel, { filter: prev[i] }, { filter: next[i], duration: step < 4 ? 0.6 : 0.2, ease: "mg.settle", immediateRender: false }, at);
+      });
+      prev = next;
+    });
+    // Tag exits with the rack.
+    tl.fromTo("#tag", { clipPath: "inset(0 0% 0 0)" }, { clipPath: "inset(0 0% 0 100%)", duration: 0.3, ease: "mg.exit", immediateRender: false }, B.rackEnd);
+
+    // ============================================================ BEAT 4 — SLAM
+    // Anticipation (layers breathe out 8%), then accelerate into contact; impact on a frame.
+    PLANES.forEach(function (sel, i) {
+      if (Z[i] === 0) return;
+      tl.fromTo(sel, { z: Z[i] }, { z: Z[i] * 1.1, duration: B.slamGo - B.rackEnd, ease: "mg.ui", immediateRender: false }, B.rackEnd);
+      tl.fromTo(sel, { z: Z[i] * 1.1 }, { z: 0, duration: B.impact - B.slamGo, ease: "mg.exit", immediateRender: false }, B.slamGo);
+    });
+    tl.fromTo("#floor", { opacity: 1, scale: 1 }, { opacity: 0.6, scale: 0.85, duration: B.impact - B.rackEnd, ease: "mg.exit", immediateRender: false }, B.rackEnd);
+    // Impact jolt (mograf, hand-tuned — replaces the registry camera-shake profile in the public copy).
+    // 6 frames, translate only: a hard first kick down-right, then two damped rebounds. Values are
+    // per-frame offsets in px, chosen by eye at 30 fps; outside the window the rig is exactly at rest.
+    var rig = $("#rig"), SH0 = B.impact, SH1 = B.impact + 0.2;
+    var JOLT = [[0, 0], [7, 9], [-5, -4], [3, 4], [-2, -1], [1, 1], [0, 0]];
+    $("#stage").style.perspective = "1700px";
+    driver(tl, 0, B.end, function (t) {
+      if (t < SH0 || t > SH1) { gsap.set(rig, { x: 0, y: 0, rotation: 0, rotationX: 0, rotationY: 0, scale: 1 }); return; }
+      var f = (t - SH0) * FPS, i = Math.min(JOLT.length - 2, Math.floor(f)), u = f - i;
+      var x = JOLT[i][0] + (JOLT[i + 1][0] - JOLT[i][0]) * u;
+      var y = JOLT[i][1] + (JOLT[i + 1][1] - JOLT[i][1]) * u;
+      gsap.set(rig, { x: x, y: y, rotation: 0, rotationX: 0, rotationY: 0, scale: 1 });
+    });
+    // Flatten: the camera lands top-down — the stack is a diamond.
+    tl.fromTo("#world", { x: 265, y: -330, z: -1650, rotationX: 52 },
+      { x: 0, y: -10, z: -900, rotationX: 0, duration: B.seam0 - B.flat0, ease: "mg.travel", immediateRender: false }, B.flat0);
+    tl.fromTo("#floor", { opacity: 0.6 }, { opacity: 0, duration: 0.4, ease: "mg.exit", immediateRender: false }, B.flat0);
+    tl.fromTo("#stage", { filter: "blur(0px)" }, { filter: "blur(2.5px)", duration: 0.3, ease: "mg.inout", immediateRender: false }, B.flat0);
+    tl.fromTo("#stage", { filter: "blur(2.5px)" }, { filter: "blur(0px)", duration: 0.28, ease: "mg.settle", immediateRender: false }, B.flat0 + 0.3);
+    tl.fromTo("#key", { x: 64, y: -66 }, { x: 260, y: 40, duration: 1.3, ease: "mg.travel", immediateRender: false }, B.flat0);
+
+    // ============================================================ SEAM — crosswarp on real captures
+    if (warpRender) {
+      // cut at peak velocity: the flatten leg ends moving (mg.travel), the warp starts fast (mg.settle)
+      var eio = gsap.parseEase("mg.settle");
+      driver(tl, B.seam0, B.seam1 - B.seam0, function (t) { warpRender(eio(Math.min(1, t / (B.seam1 - B.seam0)))); });
+    }
+
+    // ============================================================ BEAT 5 — lockup
+    // The shader lands on a clay diamond exactly the size and place of the flattened stack (a shape
+    // match), then the mark travels home to the lockup with motion blur.
+    var MG = { x: 412, y: 80.5, scale: 7.67 };
+    tl.fromTo("#markgrp", { x: MG.x, y: MG.y, scale: MG.scale }, { x: 0, y: 0, scale: 1, duration: B.land - B.seam1, ease: "mg.settle" }, B.seam1);
+    [1, 2, 3, 4].forEach(function (n) {
+      tl.fromTo("#e" + n, { y: 0, opacity: 1 - n * 0.2 }, { y: n * 18, opacity: 1 - n * 0.2, duration: 0.5, ease: "mg.ui" }, B.land + n * 0.06);
+    });
+    tl.fromTo("#wordmark", { clipPath: "inset(-10% 100% -10% 0)", x: -28, "--w": 120 },
+      { clipPath: "inset(-10% 0% -10% 0)", x: 0, "--w": 500, duration: 0.95, ease: "mg.settle" }, B.word);
+    var tg = SplitText.create("#tagline", { type: "lines", mask: "lines" });
+    tl.fromTo(tg.lines, { yPercent: 105, filter: "blur(6px)" }, { yPercent: 0, filter: "blur(0px)", duration: 0.62, ease: "mg.enter" }, B.tagline);
+    tl.fromTo("#url i", { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 0.45, ease: "mg.travel" }, B.url);
+    tl.fromTo("#url span", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.5, ease: "power3.out" }, B.url + 0.08);
+    tl.fromTo("#lockmeta", { clipPath: "inset(0 0 0 100%)" }, { clipPath: "inset(0 0 0 0%)", duration: 0.5, ease: "expo.out" }, B.meta);
+    // Light event 2: one warm sweep across the lockup, then perfect stillness (≥ 1.1 s hold).
+    tl.fromTo("#wmgloss", { backgroundPosition: "150% 0%" }, { backgroundPosition: "-50% 0%", duration: B.sweep1 - B.sweep0, ease: "mg.inout" }, B.sweep0);
+    tl.fromTo("#key", { x: 260, y: 40, opacity: 1 }, { x: 300, y: 60, opacity: 1, duration: 1.6, ease: "mg.settle", immediateRender: false }, B.seam1 + 0.1);
+
+    // pad to the end (render length is the root data-duration)
+    tl.to({}, { duration: 0.001 }, B.end - 0.001);
+
+    window.__timelines["main"] = tl;
+
+    // Registry motion-blur on the 2D snap beats (rack-word whips). Never on 3D planes (its copy
+    // group flattens preserve-3d) and never while text is being read (it is sharp at rest).
+    if (!CAPTURE && window.attachMotionBlur) {
+      RW.forEach(function (sel) { window.attachMotionBlur(sel, tl, { shutterAngle: 720, samplesPerFrame: 12, fps: FPS }); });
+      window.attachMotionBlur("#markgrp", tl, { shutterAngle: 720, samplesPerFrame: 12, fps: FPS });
+    }
+    if (window.__hfForceTimelineRebind) window.__hfForceTimelineRebind();
+  });
+})();
+
+    </script>
+  </body>
+</html>

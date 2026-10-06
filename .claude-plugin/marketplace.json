@@ -1,0 +1,22 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "mograf",
+  "description": "Free mograf motion skills for Claude Code: a studio critic (motion-review) and the core motion doctrine (motion-craft-lite).",
+  "owner": {
+    "name": "mograf",
+    "url": "https://mograf.si"
+  },
+  "plugins": [
+    {
+      "name": "mograf",
+      "source": "./plugins/mograf",
+      "description": "motion-review (9-dimension rubric, hard gates, anti-slop scan, frame-level fixes) and motion-craft-lite (ease tokens, duration bands, choreography, never-do list).",
+      "version": "1.0.0",
+      "category": "design",
+      "homepage": "https://mograf.si",
+      "license": "MIT",
+      "author": { "name": "mograf", "url": "https://mograf.si" },
+      "keywords": ["motion", "motion-graphics", "animation", "video", "hyperframes", "gsap", "remotion", "review"]
+    }
+  ]
+}

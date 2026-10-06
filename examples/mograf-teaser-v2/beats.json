@@ -1,0 +1,417 @@
+{
+ "version": 2,
+ "piece": "mograf-teaser-v2",
+ "fps": 30,
+ "duration": 15.5,
+ "aspect": "1:1",
+ "rhythm": "still-SNAP-slow ORBIT-tick-tick-tick-tick-SLAM-warp-HOLD",
+ "audio": "sfx + generated room tone (declared; no music bed)",
+ "signature": {
+  "t": 2.7,
+  "label": "explode",
+  "pctRuntime": 17
+ },
+ "history": "v1 times in polish loop 0; loop 1 retimed racks to 1.1 s, slam to 10.9, seam 11.533-12.133, end 15.5",
+ "beats": [
+  {
+   "id": "b1-hook",
+   "t": 0.0,
+   "end": 2.7,
+   "words": "One prompt made this.",
+   "verbs": {
+    "sun": "RISES",
+    "camera": "PULLS BACK",
+    "card": "ROUNDS"
+   },
+   "ids": [
+    "zoom-out-workspace-reveal",
+    "move-11",
+    "move-18"
+   ],
+   "ease": [
+    "mg.settle",
+    "mg.travel"
+   ],
+   "cut_in": "open (frame 0 composed)",
+   "cut_out": "speed-ramp",
+   "sfx": "riser + room tone"
+  },
+  {
+   "id": "b1-hook-exit",
+   "t": 2.58,
+   "end": 2.88,
+   "verbs": {
+    "hook": "EXITS (mask, down)"
+   },
+   "ids": [
+    "cut-the-curve"
+   ],
+   "ease": [
+    "mg.exit"
+   ],
+   "cut_out": "cut-the-curve",
+   "sfx": "silence (rides riser)"
+  },
+  {
+   "id": "b2-explode",
+   "t": 2.7,
+   "end": 5.2,
+   "verbs": {
+    "planes": "EXPLODE",
+    "camera": "FLIES",
+    "spin": "ROTATES 45"
+   },
+   "ids": [
+    "depth-scatter-assemble",
+    "3d-camera-flight",
+    "move-13",
+    "registry:extended-keyframe"
+   ],
+   "ease": [
+    "EK.ease",
+    "mg.settle"
+   ],
+   "cut_in": "speed-ramp",
+   "sfx": "whoosh"
+  },
+  {
+   "id": "b2-tag",
+   "t": 2.85,
+   "end": 10.9,
+   "words": "anatomy of piece 027",
+   "verbs": {
+    "tag": "WIPES"
+   },
+   "ids": [
+    "discrete-text-sequence"
+   ],
+   "ease": [
+    "mg.enter"
+   ],
+   "sfx": "click-soft -22 dB"
+  },
+  {
+   "id": "b2-read",
+   "t": 2.95,
+   "end": 6.2,
+   "words": "Every piece ships with what made it.",
+   "verbs": {
+    "line2": "LANDS"
+   },
+   "ids": [
+    "move-21"
+   ],
+   "ease": [
+    "mg.enter"
+   ],
+   "cut_out": "cut-the-curve",
+   "sfx": "room tone"
+  },
+  {
+   "id": "b2-light",
+   "t": 4.2,
+   "end": 5.8,
+   "verbs": {
+    "band": "SHINES"
+   },
+   "ids": [
+    "move-19",
+    "registry:light-sweep-pass"
+   ],
+   "ease": [
+    "mg.inout"
+   ],
+   "sfx": "room tone"
+  },
+  {
+   "id": "b2-reposition",
+   "t": 5.6,
+   "end": 6.5,
+   "verbs": {
+    "camera": "TRAVELS x200->265"
+   },
+   "ids": [
+    "multi-phase-camera"
+   ],
+   "ease": [
+    "mg.travel"
+   ],
+   "sfx": "room tone"
+  },
+  {
+   "id": "b3-rack1",
+   "t": 6.2,
+   "end": 7.3,
+   "words": "prompt",
+   "verbs": {
+    "word": "SWAPS",
+    "index": "digit ROLLS",
+    "deck": "OPENS at layer 1",
+    "focus": "RACKS"
+   },
+   "ids": [
+    "depth-of-field-blur",
+    "fixed-anchor-cycle",
+    "move-14",
+    "registry:motion-blur"
+   ],
+   "ease": [
+    "expo.out",
+    "power3.in",
+    "mg.ui",
+    "mg.settle"
+   ],
+   "cut_in": "cut-the-curve",
+   "sfx": "click-soft"
+  },
+  {
+   "id": "b3-rack2",
+   "t": 7.3,
+   "end": 8.4,
+   "words": "skills",
+   "verbs": {
+    "word": "SWAPS",
+    "index": "digit ROLLS",
+    "deck": "OPENS at layer 2",
+    "focus": "RACKS"
+   },
+   "ids": [
+    "depth-of-field-blur",
+    "fixed-anchor-cycle",
+    "move-14",
+    "registry:motion-blur"
+   ],
+   "ease": [
+    "expo.out",
+    "power3.in",
+    "mg.ui",
+    "mg.settle"
+   ],
+   "cut_in": "cut-the-curve",
+   "sfx": "click-soft"
+  },
+  {
+   "id": "b3-rack3",
+   "t": 8.4,
+   "end": 9.5,
+   "words": "source",
+   "verbs": {
+    "word": "SWAPS",
+    "index": "digit ROLLS",
+    "deck": "OPENS at layer 3",
+    "focus": "RACKS"
+   },
+   "ids": [
+    "depth-of-field-blur",
+    "fixed-anchor-cycle",
+    "move-14",
+    "registry:motion-blur"
+   ],
+   "ease": [
+    "expo.out",
+    "power3.in",
+    "mg.ui",
+    "mg.settle"
+   ],
+   "cut_in": "cut-the-curve",
+   "sfx": "click-soft"
+  },
+  {
+   "id": "b3-rack4",
+   "t": 9.5,
+   "end": 10.6,
+   "words": "copy",
+   "verbs": {
+    "word": "SWAPS",
+    "index": "digit ROLLS",
+    "deck": "OPENS at layer 4",
+    "focus": "RACKS"
+   },
+   "ids": [
+    "depth-of-field-blur",
+    "fixed-anchor-cycle",
+    "move-14",
+    "registry:motion-blur"
+   ],
+   "ease": [
+    "expo.out",
+    "power3.in",
+    "mg.ui",
+    "mg.settle"
+   ],
+   "cut_in": "cut-the-curve",
+   "sfx": "click-soft"
+  },
+  {
+   "id": "b4-slam",
+   "t": 10.6,
+   "end": 10.9,
+   "verbs": {
+    "planes": "SLAM"
+   },
+   "ids": [
+    "move-16",
+    "kinetic-beat-slam"
+   ],
+   "ease": [
+    "mg.ui",
+    "mg.exit"
+   ],
+   "cut_out": "smash",
+   "sfx": "silence then impact"
+  },
+  {
+   "id": "b4-impact",
+   "t": 10.9,
+   "end": 11.1,
+   "verbs": {
+    "rig": "SHAKES (translate only)"
+   },
+   "ids": [
+    "inline:impact-jolt"
+   ],
+   "ease": [
+    "profile handheld-tele-strong x0.8"
+   ],
+   "sfx": "impact-bass-1 (faded)"
+  },
+  {
+   "id": "b4-flatten",
+   "t": 10.9333,
+   "end": 11.5333,
+   "verbs": {
+    "camera": "LANDS top-down",
+    "stage": "travel blur 2.5px"
+   },
+   "ids": [
+    "3d-camera-flight"
+   ],
+   "ease": [
+    "mg.travel"
+   ],
+   "cut_out": "shader",
+   "sfx": "whoosh-cinematic"
+  },
+  {
+   "id": "seam-shader",
+   "t": 11.5333,
+   "end": 12.1333,
+   "verbs": {
+    "warp": "CROSSWARPS piece-diamond -> clay diamond (shape match)"
+   },
+   "ids": [
+    "gl-transitions:crosswarp"
+   ],
+   "ease": [
+    "mg.settle"
+   ],
+   "sfx": "whoosh-cinematic peak"
+  },
+  {
+   "id": "b5-mark-travel",
+   "t": 12.1333,
+   "end": 12.6,
+   "verbs": {
+    "mark": "TRAVELS home x7.67 -> 1"
+   },
+   "ids": [
+    "logo-assemble-lockup",
+    "registry:motion-blur"
+   ],
+   "ease": [
+    "mg.settle"
+   ],
+   "sfx": "swell tail"
+  },
+  {
+   "id": "b5-echoes",
+   "t": 12.6,
+   "end": 13.3,
+   "verbs": {
+    "echoes": "DROP"
+   },
+   "ids": [
+    "logo-assemble-lockup"
+   ],
+   "ease": [
+    "mg.ui"
+   ],
+   "sfx": "swell tail"
+  },
+  {
+   "id": "b5-wordmark",
+   "t": 12.6667,
+   "end": 13.6,
+   "words": "mograf",
+   "verbs": {
+    "wordmark": "WIPES + FLEXES wght 120->500"
+   },
+   "ids": [
+    "registry:variable-font-flex"
+   ],
+   "ease": [
+    "mg.settle"
+   ],
+   "sfx": "click-soft -12 dB"
+  },
+  {
+   "id": "b5-tagline",
+   "t": 12.8667,
+   "end": 15.5,
+   "words": "Motion graphics, one prompt away.",
+   "verbs": {
+    "tagline": "LANDS"
+   },
+   "ids": [
+    "move-21"
+   ],
+   "ease": [
+    "mg.enter"
+   ],
+   "sfx": "room tone"
+  },
+  {
+   "id": "b5-url",
+   "t": 13.1,
+   "end": 15.5,
+   "words": "mograf.si",
+   "verbs": {
+    "rule": "GROWS",
+    "url": "WIPES"
+   },
+   "ids": [],
+   "ease": [
+    "mg.ui",
+    "mg.enter"
+   ],
+   "sfx": "room tone"
+  },
+  {
+   "id": "b5-gloss",
+   "t": 13.1,
+   "end": 14.0,
+   "verbs": {
+    "wordmark": "GLOSS sweeps across the glyphs"
+   },
+   "ids": [
+    "move-19",
+    "registry:light-sweep-pass"
+   ],
+   "ease": [
+    "mg.inout"
+   ],
+   "sfx": "room tone"
+  },
+  {
+   "id": "final-hold",
+   "t": 14.0,
+   "end": 15.5,
+   "verbs": {
+    "all": "HOLDS STILL"
+   },
+   "ids": [],
+   "ease": [],
+   "sfx": "room tone fades out"
+  }
+ ]
+}

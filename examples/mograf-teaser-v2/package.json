@@ -1,0 +1,17 @@
+{
+  "name": "mograf-teaser-v2",
+  "version": "1.0.0",
+  "private": true,
+  "description": "mograf teaser v2 (\"Anatomy\") — a 15.5 s HyperFrames + GSAP motion piece, free example kit.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "npx --yes hyperframes@0.8.137 preview",
+    "check": "npx --yes hyperframes@0.8.137 check",
+    "render": "npx --yes hyperframes@0.8.137 render",
+    "capture-seam": "bash scripts/capture-seam.sh"
+  },
+  "dependencies": {
+    "gsap": "3.14.2"
+  }
+}
