@@ -24,14 +24,14 @@ The skills work with HyperFrames, GSAP and plain HTML/CSS. They also work with R
 **As a plugin (recommended):**
 
 ```
-/plugin marketplace add <owner>/mograf-public
+/plugin marketplace add Parrass/mograf-public
 /plugin install mograf@mograf
 ```
 
 **Manual copy:**
 
 ```bash
-git clone https://github.com/<owner>/mograf-public
+git clone https://github.com/Parrass/mograf-public
 mkdir -p ~/.claude/skills
 cp -r mograf-public/plugins/mograf/skills/* ~/.claude/skills/
 ```
